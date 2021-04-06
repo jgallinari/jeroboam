@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.jeroboam.com/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <api:login>
+            <userLogin>jgallinari</userLogin>
+            <userPwd>0000</userPwd>
+        </api:login>
+    </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.jeroboam.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <api:getAddonList>
+         <sessionAuthId>321cb453d54726c48c5119850831ba96</sessionAuthId>
+         <coId>941</coId>
+      </api:getAddonList>
+   </soapenv:Body>
+</soapenv:Envelope>

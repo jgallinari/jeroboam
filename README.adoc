@@ -1,0 +1,142 @@
+= jeroboam (/ˌdʒerəˈbəʊəm/)
+
+____
+Where https://en.wikipedia.org/wiki/Wine_bottle#Sizes[sizes] matter.
+____
+
+Sometimes, you need to maintain a SOAP API, but it's less painful when you can do it in Clojure. +
+This repository implements a Clojure SOAP server, originally inspired by https://github.com/rmuslimov/clj-soap-srv[clj-soap-srv].
+
+The API leverages JAX-WS, which standalone binary distribution can be downloaded (including the wsimport utility) from https://github.com/eclipse-ee4j/metro-jax-ws/releases[eclipse-ee4j / metro-jax-ws], or fetched from https://search.maven.org/artifact/com.sun.xml.ws/jaxws-ri[search.maven.org].
+
+== Dev
+
+=== Start dev environment with docker-compose
+
+This will have the following actions:
+
+* Uncompress jaxws-ri archive if first time.
+* Generate the Java code from the WSDL files.
+* Compile all Java classes (generated code + implementation). +
+NB: Compiling Java with the Clojure CLI tools is achieved via https://github.com/EwenG/badigeon[badigeon] as described in https://gamlor.info/posts-output/2019-10-24-compile-java-with-clojure-deps/en/[Compiling Java Classes with Clojure Deps].
+* Start a REPL.
+
+[source,bash]
+----
+docker-compose -p jeroboam -f dev/docker-compose.yaml up -d
+docker-compose logs -f
+----
+
+=== Connect to REPL from Emacs
+
+Once you see that the server started, like in:
+
+[source,bash]
+----
+jeroboam    | nREPL server started on port 7889 on host 0.0.0.0 - nrepl://0.0.0.0:7889
+----
+
+you can connect to the REPL from the editor.
+
+[source,bash]
+----
+M-x cider-connect
+host? localhost
+port? 7889
+----
+
+=== Compile user.clj from Emacs
+
+Open `dev/user.clj` in a buffer and compile it: C-c C-k, then switch back to the REPL buffer.
+
+=== Start/stop the WS server from Emacs
+
+[source,clojure]
+----
+user> (start)
+user> (stop)
+user> (restart)
+----
+
+NB: `restart` is useful when we changed some Clojure code and want to reload everything without leaving the REPL.
+
+=== How to: add a new API function
+
+We'll use the top-down approach: from WSDL to code.
+
+* Add the new function tidbits into the WSDL file, e.g. `Basic.wsdl`.
+* Generate Java code. This will update e.g. `Basic.java`, and may generate helper classes.
+
+[source,bash]
+----
+make wsimport
+----
+
+* Implement the new function of the Java interface, e.g. in `BasicImpl.java`.
+* Compile Java code.
+
+[source,bash]
+----
+make java
+----
+
+* Start the Clojure environment, and make the Clojure implementation code in `api.clj`.
+* Test the Clojure code in the REPL, then `user> (restart)`, and test with a live SOAP request via https://www.postman.com/[Postman] on http://localhost:8080/soap.
+
+== Test
+
+* Server #1 is reachable on: http://localhost:8080/Basic  
+* Server #2 is reachable on: http://localhost:8080/Simple
+
+=== Basic test
+
+[source,bash]
+----
+make login
+----
+This should return:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+  <S:Body>
+    <ns2:loginResponse xmlns:ns2="http://api.jeroboam.com/">
+      <requestId>123</requestId>
+      <sessionAuthId>ABC</sessionAuthId>
+    </ns2:loginResponse>
+  </S:Body>
+</S:Envelope>
+----
+
+=== Simple test
+
+[source,bash]
+----
+make getAddonList
+----
+This should return:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+  <S:Body>
+    <ns2:getAddonListResponse xmlns:ns2="http://api.jeroboam.com/">
+      <requestId>456</requestId>
+      <addonList>
+        <addon>
+          <addonId>ID1</addonId>
+          <addonName>name1</addonName>
+          <statusId>status1</statusId>
+        </addon>
+        <addon>
+          <addonId>ID2</addonId>
+          <addonName>name2</addonName>
+          <statusId>status2</statusId>
+        </addon>
+      </addonList>
+    </ns2:getAddonListResponse>
+  </S:Body>
+</S:Envelope>
+----

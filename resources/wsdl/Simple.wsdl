@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions
+    xmlns:tns="http://api.jeroboam.com/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    name="Simple"
+    targetNamespace="http://api.jeroboam.com/">
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://api.jeroboam.com/">
+            <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <xsd:complexType name="Addon">
+                <xsd:all>
+                	<xsd:element name="addonId" type="xsd:string"></xsd:element>
+                	<xsd:element name="addonName" type="xsd:string"></xsd:element>
+                	<xsd:element name="statusId" type="xsd:string"></xsd:element>
+                </xsd:all>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfAddon">
+                <xsd:sequence>
+                    <xsd:element name="addon" minOccurs="0" maxOccurs="unbounded" type="tns:Addon"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+  <wsdl:message name="getAddonListRequest">
+  	<wsdl:part name="sessionAuthId" type="xsd:string"></wsdl:part>
+  	<wsdl:part name="coId" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getAddonListResponse">
+  	<wsdl:part name="requestId" type="xsd:integer"></wsdl:part>
+  	<wsdl:part name="addonList" type="tns:ArrayOfAddon"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Simple">
+    <wsdl:operation name="getAddonList">
+      <wsdl:input message="tns:getAddonListRequest"></wsdl:input>
+      <wsdl:output message="tns:getAddonListResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SimpleSOAP"
+  	type="tns:Simple">
+  	<soap:binding style="rpc"
+  		transport="http://schemas.xmlsoap.org/soap/http" />
+  	<wsdl:operation name="getAddonList">
+  		<soap:operation
+  			soapAction="http://api.jeroboam.com/getAddonList" />
+  		<wsdl:input>
+  			<soap:body use="literal"
+  				namespace="http://api.jeroboam.com/" />
+  		</wsdl:input>
+  		<wsdl:output>
+  			<soap:body use="literal"
+  				namespace="http://api.jeroboam.com/" />
+  		</wsdl:output>
+  	</wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Simple">
+    <wsdl:documentation>
+
+                         MobiquiThings, Inc.
+                Copyright 2020 All Rights Reserved.
+
+    These computer program listings and specifications, herein,
+    are the property of MobiquiThings, Inc. and shall not be
+    reproduced or copied or used in whole or in part as the basis
+    for manufacture or sale of items without written permission.
+
+    Simple SOAP API v1.0
+
+    </wsdl:documentation>
+    <wsdl:port binding="tns:SimpleSOAP" name="SimpleSOAP">
+      <soap:address location="http://api.jeroboam.com/soap?service=Simple"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

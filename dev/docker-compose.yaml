@@ -1,0 +1,17 @@
+### NB: No need to build since using image.
+### docker-compose -p jeroboam -f dev/docker-compose.yaml up # -d
+version: "3.8"
+
+services:
+  clojure:
+    image: clojure:openjdk-15-tools-deps-alpine
+    container_name: jeroboam
+    volumes:
+      - ..:/repository
+      - /repository/.cpcache
+    working_dir: /repository
+    network_mode: bridge
+    ports:
+      - "7889:7889"             # nREPL
+      - "8080:8080"             # WS
+    entrypoint: dev/entrypoint.sh
