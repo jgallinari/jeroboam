@@ -7,6 +7,9 @@ ____
 Sometimes, you need to maintain a SOAP API, but it's less painful when you can do it in Clojure. +
 This repository implements a Clojure SOAP server, originally inspired by https://github.com/rmuslimov/clj-soap-srv[clj-soap-srv].
 
+The idea here consists in only using Java to take advantage of the SOAP glue it provides, and then do all the API implementation in Clojure via Java Interop, by https://clojure.org/reference/java_interop#_calling_clojure_from_java[calling Clojure from Java]. +
+This way, the Clojure API only manipulates pure Clojure data structures like vectors or hash-map as input/ouput, which are then mapped to `java.util.List` or `java.util.Map` in the Java implementation.
+
 The API leverages JAX-WS, which standalone binary distribution can be downloaded (including the wsimport utility) from https://github.com/eclipse-ee4j/metro-jax-ws/releases[eclipse-ee4j / metro-jax-ws], or fetched from https://search.maven.org/artifact/com.sun.xml.ws/jaxws-ri[search.maven.org].
 
 == Dev
